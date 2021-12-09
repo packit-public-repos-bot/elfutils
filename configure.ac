@@ -153,16 +153,29 @@ AC_SUBST([fpie_CFLAGS])
 
 dso_LDFLAGS="-shared"
 
-ZDEFS_LDFLAGS="-Wl,-z,defs"
-AC_CACHE_CHECK([whether gcc supports $ZDEFS_LDFLAGS], ac_cv_zdefs, [dnl
-save_LDFLAGS="$LDFLAGS"
-LDFLAGS="$ZDEFS_LDFLAGS $save_LDFLAGS"
-AC_LINK_IFELSE([AC_LANG_PROGRAM()], ac_cv_zdefs=yes, ac_cv_zdefs=no)
-LDFLAGS="$save_LDFLAGS"
-])
-if test "$ac_cv_zdefs" = "yes"; then
-	dso_LDFLAGS="$dso_LDFLAGS $ZDEFS_LDFLAGS"
+# ASan, UBSan and MSan provided by clang aren't compatible with --no-undefined and -z,defs:
+# https://clang.llvm.org/docs/AddressSanitizer.html#usage
+# https://github.com/google/sanitizers/issues/380
+# so to build elfutils with clang with the sanitizers it should be possible
+# to turn them off.
+AC_ARG_ENABLE([no-undefined],
+AS_HELP_STRING([--disable-no-undefined],[disable --no-undefined and -z,defs]),
+[use_no_undefined=$enableval], [use_no_undefined=yes])
+if test "$use_no_undefined" = yes; then
+	ZDEFS_LDFLAGS="-Wl,-z,defs"
+	AC_CACHE_CHECK([whether gcc supports $ZDEFS_LDFLAGS], ac_cv_zdefs, [dnl
+	save_LDFLAGS="$LDFLAGS"
+	LDFLAGS="$ZDEFS_LDFLAGS $save_LDFLAGS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM()], ac_cv_zdefs=yes, ac_cv_zdefs=no)
+	LDFLAGS="$save_LDFLAGS"
+	])
+	if test "$ac_cv_zdefs" = "yes"; then
+		dso_LDFLAGS="$dso_LDFLAGS $ZDEFS_LDFLAGS"
+	fi
+
+	NO_UNDEFINED=",--no-undefined"
 fi
+AC_SUBST([NO_UNDEFINED])
 
 # We really want build-ids. Warn and force generating them if gcc was
 # configure without --enable-linker-build-id
