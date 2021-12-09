@@ -147,12 +147,10 @@ for phase in "${PHASES[@]}"; do
                 # There should probably be a better way to turn off unaligned access
                 sed -i 's/\(check_undefined_val\)=[0-9]/\1=1/' configure.ac
 
-                # https://github.com/evverx/elfutils/issues/11
-                sed -i 's/^\(ZDEFS_LDFLAGS=\).*/\1/' configure.ac
-                find -name Makefile.am | xargs sed -i 's/,--no-undefined//'
-
                 # https://github.com/evverx/elfutils/issues/13
                 sed -i 's/ test-nlist / /' tests/Makefile.am
+
+                additional_configure_flags="--disable-no-undefined"
             fi
 
             $CC --version
