@@ -88,7 +88,7 @@ AS_IF([test "$use_locks" = yes],
 AH_TEMPLATE([USE_LOCKS], [Defined if libraries should be thread-safe.])
 
 AC_ARG_ENABLE([afl],
-AS_HELP_STRING([--enable-afl],[build binaries with afl]), [use_afl=$enableval], [use_afl=no])
+AS_HELP_STRING([--enable-afl],[run fuzzers with afl]), [use_afl=$enableval], [use_afl=no])
 if test "$use_afl" = yes; then
     AC_CHECK_PROG(CC, afl-gcc, afl-gcc)
     if test -z "$CC"; then
@@ -105,7 +105,7 @@ if test "$use_afl" = yes; then
 fi
 
 AC_ARG_ENABLE([honggfuzz],
-AS_HELP_STRING([--enable-honggfuzz],[build binaries with honggfuzz]), [use_honggfuzz=$enableval], [use_honggfuzz=no])
+AS_HELP_STRING([--enable-honggfuzz],[run fuzzers with honggfuzz]), [use_honggfuzz=$enableval], [use_honggfuzz=no])
 if test "$use_honggfuzz" = yes; then
     if test "$use_afl" = yes; then
       AC_MSG_ERROR([cannot enable afl and honggfuzz together])
@@ -868,6 +868,8 @@ AC_MSG_NOTICE([
     debug branch prediction            : ${use_debugpred}
     gprof support                      : ${use_gprof}
     gcov support                       : ${use_gcov}
+    run fuzzers with honggfuzz         : ${use_honggfuzz}
+    run fuzzers with AFL               : ${use_afl}
     run all tests under valgrind       : ${use_valgrind}
     gcc undefined behaviour sanitizer  : ${use_undefined}
     gcc address sanitizer              : ${use_address}
