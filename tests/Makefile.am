@@ -593,7 +593,8 @@ EXTRA_DIST = run-arextract.sh run-arsymtest.sh run-ar.sh \
 	     fuzz-dwfl-core-crashes/oss-fuzz-41574 \
 	     fuzz-dwfl-core-crashes/oss-fuzz-41575 \
 	     fuzz-dwfl-core-crashes/oss-fuzz-42645 \
-	     fuzz-dwfl-core-crashes/oss-fuzz-43307
+	     fuzz-dwfl-core-crashes/oss-fuzz-43307 \
+	     fuzz-dwfl-core-crashes/oss-fuzz-43356
 
 
 if USE_VALGRIND
