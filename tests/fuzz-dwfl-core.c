@@ -93,6 +93,8 @@ LLVMFuzzerTestOneInput (const uint8_t *data, size_t size)
     goto cleanup;
   if (dwfl_getmodules (dwfl, module_callback, NULL, 0) != 0)
     goto cleanup;
+  if (dwfl_core_file_attach (dwfl, core) < 0)
+    goto cleanup;
 
 cleanup:
   dwfl_end (dwfl);
