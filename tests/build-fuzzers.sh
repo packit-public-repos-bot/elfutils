@@ -103,4 +103,9 @@ $CC $CFLAGS \
 $CXX $CXXFLAGS $LIB_FUZZING_ENGINE fuzz-dwfl-core.o \
 	./libdw/libdw.a ./libelf/libelf.a -l:libz.a \
 	-o "$OUT/fuzz-dwfl-core"
-zip -r -j "$OUT/fuzz-dwfl-core_seed_corpus.zip" tests/fuzz-dwfl-core-crashes
+
+public_corpus=$(mktemp)
+wget -O "$public_corpus" https://storage.googleapis.com/elfutils-backup.clusterfuzz-external.appspot.com/corpus/libFuzzer/elfutils_fuzz-dwfl-core/public.zip
+unzip -qd tests/fuzz-dwfl-core-crashes "$public_corpus"
+rm -f "$public_corpus"
+zip -qr "$OUT/fuzz-dwfl-core_seed_corpus.zip" tests/fuzz-dwfl-core-crashes
