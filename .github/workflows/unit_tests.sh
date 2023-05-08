@@ -16,13 +16,7 @@ ADDITIONAL_DEPS=(
 COVERITY_SCAN_TOOL_BASE="/tmp/coverity-scan-analysis"
 COVERITY_SCAN_PROJECT_NAME="evverx/elfutils"
 
-# https://github.com/evverx/elfutils/issues/18
-CLANG_NO_ERROR_FLAGS=(
-    -Wno-error=xor-used-as-pow
-    -Wno-error=gnu-variable-sized-type-not-at-end
-    -Wno-error=unused-const-variable
-    -Wno-error=typedef-redefinition
-)
+CLANG_NO_ERROR_FLAGS=()
 
 set -ex
 
@@ -98,9 +92,8 @@ for phase in "${PHASES[@]}"; do
                 # https://reviews.llvm.org/D97445
                 #
                 # -g -O2: https://sourceware.org/bugzilla/show_bug.cgi?id=23914
-                #
-                # -fno-addrsig to fix "section [22] '.llvm_addrsig' has unsupported type 1879002115"
-                flags="-g -O2 -fno-addrsig ${CLANG_NO_ERROR_FLAGS[@]}"
+                # -gdwarf-4 instead of -g: https://bugs.kde.org/show_bug.cgi?id=452758
+                flags="-O2 -gdwarf-4 ${CLANG_NO_ERROR_FLAGS[@]}"
                 export CFLAGS="$flags"
                 export CXXFLAGS="$flags"
             fi
@@ -142,11 +135,7 @@ for phase in "${PHASES[@]}"; do
                 # https://github.com/evverx/elfutils/issues/15
                 sanitize_flags="-fsanitize=address,undefined -fno-sanitize=pointer-overflow -fno-sanitize=vla-bound"
 
-                # https://github.com/evverx/elfutils/issues/14
-                test_flags="-fno-addrsig"
-
-
-                clang_flags="$common_flags $sanitize_flags $test_flags ${CLANG_NO_ERROR_FLAGS[@]}"
+                clang_flags="$common_flags $sanitize_flags ${CLANG_NO_ERROR_FLAGS[@]}"
                 export CFLAGS="$clang_flags"
                 export CXXFLAGS="$clang_flags"
 
